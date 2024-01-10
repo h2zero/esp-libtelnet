@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "src/esp-libtelnet.c"
+        "src/libtelnet/libtelnet.c"
+    INCLUDE_DIRS
+        "src"
+        "src/libtelnet"
+    PRIV_REQUIRES
+        esp_ringbuf
+)

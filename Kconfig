@@ -1,0 +1,44 @@
+menu "esp-libtelnet"
+
+    config ESP_LIBTELNET_BUFFER_SIZE
+        int "Size of the Telent message buffer"
+        default 4096
+        help
+            This is the size of the buffer used to store the messages that
+            are sent to the telnet client. Older messages are replaced by
+            new ones once the buffer is full. All messages in the buffer
+            will be sent and buffer cleared once a client connects.
+
+    config ESP_LIBTELNET_TX_CHUNK_SIZE
+        int "Size of the chunks used to send the messages"
+        default 512
+        help
+            This is the size of the chunks used to send the messages to
+            the telnet client. The messages are sent in chunks to avoid
+            overflowing the telnet client's buffer.
+
+    config ESP_LIBTELNET_RX_BUF_SIZE
+        int "Size of the telnet RX buffer"
+        default 1024
+        help
+            Number of bytes allocated to receive data from a telnet client.
+
+    config ESP_LIBTELNET_TASK_STACK_SIZE
+        int "Size of the Telnet task stack"
+        default 4096
+        help
+            This is the size of the stack used by the telnet task.
+
+    config ESP_LIBTELNET_TASK_PRIO
+        int "Priority of the Telnet task"
+        default 0
+        help
+            This is the priority of the telnet task.
+
+    config ESP_LIBTELNET_TASK_CORE
+        int "Core of the Telnet task"
+        default 0
+        depends on !FREERTOS_UNICORE
+        help
+            The core that the telnet task will run on.
+endmenu

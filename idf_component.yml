@@ -1,0 +1,7 @@
+dependencies:
+  idf:
+    version: '>=4.0'
+description: 'Remote console over telnet'
+url: https://github.com/h2zero/esp-libtelnet
+version: 0.1.0
+license: Apache-2.0
