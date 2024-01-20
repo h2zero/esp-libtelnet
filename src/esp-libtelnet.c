@@ -89,7 +89,7 @@ static void telnet_handle_conn(int conn_fd) {
     pClient->tnHandle = telnet_init(my_telopts, telnet_event_handler, 0, pClient);
     if (!pClient->tnHandle) {
         ESP_LOGE(tag, "Failed to initialize telnet client");
-        free(pClient);
+        goto done;
         return;
     }
 
@@ -128,7 +128,7 @@ static void telnet_handle_conn(int conn_fd) {
             }
         }
       }
-
+done:
     telnet_free(pClient->tnHandle);
     free(pClient);
 }
