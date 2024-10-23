@@ -7,4 +7,5 @@ idf_component_register(
         "src/libtelnet"
     PRIV_REQUIRES
         esp_ringbuf
+        esp_timer
 )

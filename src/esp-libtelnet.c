@@ -20,6 +20,7 @@
 #include <lwip/sockets.h>
 #include <libtelnet.h>
 #include "esp-libtelnet.h"
+#include <esp_timer.h>
 
 extern void ets_install_putc1(void (*p)(char c));
 
@@ -173,6 +174,12 @@ void telnet_mirror_to_uart(bool enable) {
     mirror_to_uart = enable;
 }
 
+void redirect_esp_timer(void *arg) {
+    stdout=_GLOBAL_REENT->_stdout;
+    stderr=_GLOBAL_REENT->_stderr;
+    xTaskNotifyGive((TaskHandle_t)arg);
+}
+
 void start_telnet(void) {
     if (telnet_task_handle) {
         ESP_LOGW(tag, "Telnet task already running");
@@ -214,6 +221,18 @@ void init_telnet(telnet_rx_cb_t rx_cb) {
     // Also redirect stdout/stderr of main task
     stdout=_GLOBAL_REENT->_stdout;
     stderr=_GLOBAL_REENT->_stderr;
+
+    esp_timer_create_args_t timer_args = {
+        .callback = &redirect_esp_timer,
+        .arg = xTaskGetCurrentTaskHandle(),
+        .dispatch_method = ESP_TIMER_TASK,
+        .name = "telnet_redirect",
+    };
+    esp_timer_handle_t timer;
+    esp_timer_create(&timer_args, &timer);
+    esp_timer_start_once(timer, 1000U);
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    esp_timer_delete(timer);
 
     // Redirect the output of the ROM functions to our telnet handler
     ets_install_putc1(&telnet_putc);
