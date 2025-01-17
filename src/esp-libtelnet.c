@@ -204,7 +204,7 @@ void init_telnet(telnet_rx_cb_t rx_cb) {
     }
 
     ESP_LOGI(tag, "Redirecting log output to telnet");
-    uart_fd = open("/dev/uart/0", O_RDWR);
+    uart_fd = open("/dev/console", O_RDWR);
     if (uart_fd < 0) {
         ESP_LOGE(tag, "Failed to open UART");
     }
