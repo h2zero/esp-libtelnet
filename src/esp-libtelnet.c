@@ -136,13 +136,23 @@ done:
 
 static void telnet_task(void *data) {
     int serverSocket;
+#if CONFIG_LWIP_IPV6
+    struct sockaddr_in6 serverAddr;
+    serverAddr.sin6_family = AF_INET6;
+    serverAddr.sin6_addr = in6addr_any;
+    serverAddr.sin6_port = htons(23);
+#else
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(23);
-
+#endif
     while (1) {
+#if CONFIG_LWIP_IPV6
+        serverSocket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+#else
         serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
         if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) >= 0 &&
             listen(serverSocket, 1) >= 0) {
             break;
