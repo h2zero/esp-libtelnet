@@ -170,7 +170,7 @@ static void telnet_task(void *data) {
         if (conn_fd >= 0) {
 #if CONFIG_LWIP_IPV6
             if (serverAddr.sin6_family == AF_INET) {
-                ESP_LOGI(tag, "Telnet client connected from %s", ip4addr_ntoa((const ip4_addr_t *)&(((struct sockaddr_in *)&serverAddr)->sin_addr.s_addr)) );
+                ESP_LOGI(tag, "Telnet client connected from %s", ip4addr_ntoa((const ip4_addr_t *)&(((struct sockaddr_in *)&serverAddr)->sin_addr.s_addr)));
             } else if (serverAddr.sin6_family == AF_INET6) {
                 ESP_LOGI(tag, "Telnet client connected from %s", ip6addr_ntoa((const ip6_addr_t *)&serverAddr.sin6_addr));
             }
