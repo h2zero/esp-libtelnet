@@ -168,7 +168,11 @@ static void telnet_task(void *data) {
         int conn_fd = accept(serverSocket, (struct sockaddr *)&serverAddr, &len);
 
         if (conn_fd >= 0) {
-            ESP_LOGI(tag, "Telnet client connected");
+#if CONFIG_LWIP_IPV6
+            ESP_LOGI(tag, "Telnet client connected from %s", ip6addr_ntoa((const ip6_addr_t *)&serverAddr.sin6_addr));
+#else
+            ESP_LOGI(tag, "Telnet client connected from %s", ip4addr_ntoa((const ip4_addr_t *)&serverAddr.sin_addr.s_addr));
+#endif
             telnet_handle_conn(conn_fd);
             close(conn_fd);
             ESP_LOGI(tag, "Telnet client disconnected, telnet task HWM: %d", uxTaskGetStackHighWaterMark(NULL));
