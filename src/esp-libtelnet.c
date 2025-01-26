@@ -147,6 +147,7 @@ static void telnet_task(void *data) {
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(23);
 #endif
+
     while (1) {
 #if CONFIG_LWIP_IPV6
         serverSocket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
