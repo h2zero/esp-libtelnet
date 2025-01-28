@@ -136,13 +136,24 @@ done:
 
 static void telnet_task(void *data) {
     int serverSocket;
+#if CONFIG_LWIP_IPV6
+    struct sockaddr_in6 serverAddr;
+    serverAddr.sin6_family = AF_INET6;
+    serverAddr.sin6_addr = in6addr_any;
+    serverAddr.sin6_port = htons(23);
+#else
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(23);
+#endif
 
     while (1) {
+#if CONFIG_LWIP_IPV6
+        serverSocket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+#else
         serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
         if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) >= 0 &&
             listen(serverSocket, 1) >= 0) {
             break;
@@ -158,7 +169,15 @@ static void telnet_task(void *data) {
         int conn_fd = accept(serverSocket, (struct sockaddr *)&serverAddr, &len);
 
         if (conn_fd >= 0) {
-            ESP_LOGI(tag, "Telnet client connected");
+#if CONFIG_LWIP_IPV6
+            if (serverAddr.sin6_family == AF_INET) {
+                ESP_LOGI(tag, "Telnet client connected from %s", ip4addr_ntoa((const ip4_addr_t *)&(((struct sockaddr_in *)&serverAddr)->sin_addr.s_addr)));
+            } else if (serverAddr.sin6_family == AF_INET6) {
+                ESP_LOGI(tag, "Telnet client connected from %s", ip6addr_ntoa((const ip6_addr_t *)&serverAddr.sin6_addr));
+            }
+#else
+            ESP_LOGI(tag, "Telnet client connected from %s", ip4addr_ntoa((const ip4_addr_t *)&serverAddr.sin_addr.s_addr));
+#endif
             telnet_handle_conn(conn_fd);
             close(conn_fd);
             ESP_LOGI(tag, "Telnet client disconnected, telnet task HWM: %d", uxTaskGetStackHighWaterMark(NULL));
