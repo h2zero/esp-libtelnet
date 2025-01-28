@@ -1,0 +1,11 @@
+dependencies:
+  uqfus/esp32-wifi-provision-care:
+    git: https://github.com/uqfus/esp32-wifi-provision-care.git
+  h2zero/esp-libtelnet:
+    git: https://github.com/h2zero/esp-libtelnet.git
+  espressif/mdns: "^1.0.3"
+
+  cmd_system:
+    path: ${IDF_PATH}/examples/system/console/advanced/components/cmd_system
+  cmd_nvs:
+    path: ${IDF_PATH}/examples/system/console/advanced/components/cmd_nvs
